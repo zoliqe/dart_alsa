@@ -6,9 +6,7 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'alsa_generated_bindings.dart' as a;
 
-
 final timings = [];
-
 
 void playbackWorker(SendPort replyPort) {
   final requestsPort = ReceivePort();
@@ -29,7 +27,7 @@ void playbackWorker(SendPort replyPort) {
     } else if (message is String) {
       switch (message) {
         case 'stop':
-        print('stopped');
+          print('stopped');
           final file = File('timings.txt');
           for (var i in timings) {
             file.writeAsStringSync('$i\n', mode: FileMode.append);
@@ -58,7 +56,7 @@ class Alsa {
 
   final pcmHandlePtr = calloc<Pointer<a.snd_pcm_>>();
 
-  late final Pointer<Uint64> framesPtr;
+  late final Pointer<UnsignedLong> framesPtr;
 
   final int rate;
   final int channels;
@@ -72,18 +70,18 @@ class Alsa {
     this.channels,
   ) {
     // https://github.com/dart-lang/ffigen/issues/72#issuecomment-672060509
-    final name = 'default'.toNativeUtf8().cast<Int8>();
+    final name = 'default'.toNativeUtf8().cast<Char>();
     final stream = 0;
     // 0 ia "standard blocking mode";
     // final mode = 0;
     final mode = a.SND_PCM_NONBLOCK;
 
-    final ratePtr = calloc<Uint32>();
+    final ratePtr = calloc<UnsignedInt>();
     ratePtr.value = rate;
 
-    final dirPtr = Pointer<Int32>.fromAddress(0);
-    final tmpPtr = calloc<Uint32>();
-    framesPtr = calloc<Uint64>();
+    final dirPtr = Pointer<Int>.fromAddress(0);
+    final tmpPtr = calloc<UnsignedInt>();
+    framesPtr = calloc<UnsignedLong>();
 
     /* Open the PCM device in playback mode */
     final openResult = alsa.snd_pcm_open(pcmHandlePtr, name, stream, mode);
@@ -102,12 +100,12 @@ class Alsa {
     /* Set parameters */
     var result = 0;
     result = alsa.snd_pcm_hw_params_set_access(pcmHandlePtr.value,
-        paramsPtr.value, a.snd_pcm_access_t.SND_PCM_ACCESS_RW_INTERLEAVED);
+        paramsPtr.value, a.snd_pcm_access_.SND_PCM_ACCESS_RW_INTERLEAVED);
     if (result < 0) {
       throw Exception("ERROR: Can't set interleaved mode.");
     }
     result = alsa.snd_pcm_hw_params_set_format(pcmHandlePtr.value,
-        paramsPtr.value, a.snd_pcm_format_t.SND_PCM_FORMAT_S16_LE);
+        paramsPtr.value, a.snd_pcm_format_.SND_PCM_FORMAT_S16_LE);
     if (result < 0) {
       throw Exception("ERROR: Can't set playback format.");
     }

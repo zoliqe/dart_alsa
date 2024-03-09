@@ -8,14 +8,14 @@ platforms:
   linux:
 
 environment:
-  sdk: ">=2.13.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  ffi: ^1.0.0
-  tuple: ^2.0.0
+  ffi: ^2.1.0
+  tuple: ^2.0.2
 
 dev_dependencies:
-  ffigen: ^3.0.0
+  ffigen: ^11.0.0
   pedantic: ^1.9.0
 
 ffigen:
@@ -24,7 +24,7 @@ ffigen:
   headers:
     entry-points:
       - "/usr/include/alsa/asoundlib.h"
-  compiler-opts: "-I/usr/lib/llvm-11/include/ -L/usr/lib/llvm-11/lib/
+  compiler-opts: "-I/usr/lib/llvm-11/include/
     -I/usr/local/opt/llvm/include/ -Wno-nullability-completeness"
   structs:
     rename:
@@ -32,3 +32,15 @@ ffigen:
     member-rename:
       ".*":
         "_(.*)": "$1_"
+  enums:
+    rename:
+      "_(.*)": "$1_"
+    member-rename:
+      ".*":
+        "_(.*)": "$1_"
+  functions:
+    rename:
+      "_(.*)": "$1_"
+  globals:
+    rename:
+      "_(.*)": "$1_"
